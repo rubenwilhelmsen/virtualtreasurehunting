@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewGameSetupActivity">
+
+    <include
+        android:id="@+id/backbutton_actionbar"
+        layout="@layout/actionbar_backbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backbutton_actionbar"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/setup_title"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title_layout">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <View
+                    android:id="@+id/line_divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="?android:attr/listDivider" />
+
+
+                <TextView
+                    android:id="@+id/caches_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/line_divider_1"
+                    android:layout_centerHorizontal="false"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:text="@string/setup_caches"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/cache_spinner"
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/caches_question"
+                    android:layout_alignTop="@+id/caches_question"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/caches_question" />
+
+                <View
+                    android:id="@+id/line_divider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/cache_spinner"
+                    android:layout_marginTop="15dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/distance_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/line_divider_2"
+                    android:layout_centerHorizontal="false"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:text="@string/setup_distance"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/distance_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignTop="@+id/distance_question"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/distance_question"
+                    android:gravity="center"
+                    android:text="@string/default_distance" />
+
+                <SeekBar
+                    android:id="@+id/distance_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/distance_question"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp" />
+
+                <View
+                    android:id="@+id/line_divider_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/distance_seekbar"
+                    android:layout_marginTop="15dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/gamemode_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/line_divider_3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:text="@string/setup_gamemode"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:id="@+id/gamemode_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/gamemode_question"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ToggleButton
+                        android:id="@+id/standard_gamemode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textOn="@string/standard"
+                        android:textOff="@string/standard"
+                        android:checked="true"/>
+
+                    <ToggleButton
+                        android:id="@+id/timetrial_gamemode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textOn="@string/timetrial"
+                        android:textOff="@string/timetrial"/>
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/line_divider_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/gamemode_group"
+                    android:layout_marginTop="15dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/timelimit_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/line_divider_4"
+                    android:layout_centerHorizontal="false"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:text="@string/setup_timelimit"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/timelimit_spinner"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/timelimit_question"
+                    android:layout_alignTop="@+id/timelimit_question"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/timelimit_question" />
+
+                <View
+                    android:id="@+id/line_divider_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/timelimit_question"
+                    android:layout_marginTop="15dp"
+                    android:background="?android:attr/listDivider" />
+
+                <Button
+                    android:id="@+id/start_game"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/line_divider_5"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/start_game" />
+
+            </RelativeLayout>
+    </ScrollView>
+
+
+
+
+
+</RelativeLayout>

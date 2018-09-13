@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OpenTreasureMinigameActivity">
+
+    <ImageView
+        android:id="@+id/tap_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:srcCompat="@drawable/tap"
+        android:contentDescription="@string/tap_action_content"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/shake_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:srcCompat="@drawable/shake"
+        android:contentDescription="@string/tap_action_content"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/jump_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:srcCompat="@drawable/jump"
+        android:contentDescription="@string/tap_action_content"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/dark_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:srcCompat="@drawable/dark"
+        android:contentDescription="@string/tap_action_content"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/countdown_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:paddingTop="30dp"
+        android:text="@string/minigame_countdown"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/actions_completed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center|end"
+        android:padding="10dp"
+        android:text="@string/actions_completed"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp" />
+
+    <ProgressBar
+        android:id="@+id/dark_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:max="1000"
+        android:paddingBottom="30dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:progress="0"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/jump_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:max="100"
+        android:paddingBottom="30dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:progress="0"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/shake_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:max="300"
+        android:paddingBottom="30dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:progress="0"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/tap_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:max="10"
+        android:paddingBottom="30dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:progress="0"
+        android:visibility="gone"/>
+
+
+</FrameLayout>
