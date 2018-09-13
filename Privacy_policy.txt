@@ -1,0 +1,3 @@
+Usage of sensitive information
+
+The application uses your phones location services. The data collected are only used for internal app processes and never shared with anyone. The location services are also only used when the app is running. Permissions to this can be turned off from your phones settings application. Your phones accelerometer and light sensor are also used for internal processes during the minigame (detection of shake, jump and brightness).
