@@ -47,8 +47,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import rubenwilhelmsen.github.com.virtualgeocaching.R;
-
 public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;

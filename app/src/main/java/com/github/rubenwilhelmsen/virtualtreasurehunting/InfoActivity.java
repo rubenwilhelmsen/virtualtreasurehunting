@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-import rubenwilhelmsen.github.com.virtualgeocaching.R;
-
 public class InfoActivity extends AppCompatActivity {
 
     private View actionbar;

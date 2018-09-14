@@ -18,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import rubenwilhelmsen.github.com.virtualgeocaching.R;
-
 public class OpenTreasureMinigameActivity extends AppCompatActivity implements SensorEventListener{
 
     private View tempView;

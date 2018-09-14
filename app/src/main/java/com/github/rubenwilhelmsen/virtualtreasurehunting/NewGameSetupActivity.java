@@ -12,10 +12,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import rubenwilhelmsen.github.com.virtualgeocaching.R;
-
 public class NewGameSetupActivity extends AppCompatActivity {
 
     private TextView distanceTextView;
