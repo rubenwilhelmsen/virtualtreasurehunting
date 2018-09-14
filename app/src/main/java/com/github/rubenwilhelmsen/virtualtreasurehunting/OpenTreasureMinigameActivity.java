@@ -1,4 +1,4 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import rubenwilhelmsen.github.com.virtualgeocaching.R;
 
 public class OpenTreasureMinigameActivity extends AppCompatActivity implements SensorEventListener{
 
@@ -44,7 +46,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
-        //Ifall telefonen inte har sensorerna tillgängliga skippas minigame:et
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (sensor == null) {
             Toast.makeText(this,"No light sensor found", Toast.LENGTH_SHORT);
@@ -100,7 +101,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
         super.onBackPressed();
     }
 
-    //Hanterar "Tap"-kortet
     /**
      * Handles the Tap card. Listens for taps and calls {@code completeAction()} if the user has tapped 10 times. Also updates the progress bar.
      */
@@ -116,12 +116,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
             }
         }
     }
-
-    //Hanterar "Jump"-kortet. Ska försöka lyssna efter ett hopp, den är dock int perfekt och ibland funkar även bara på ett skak.
-    //Först letar den efter en förändring i accelerometerns z axel, specifikt ifall telefonen kraftigt dras upp. När detta sker sätts boolean:en jumped till true.
-    //Efter det letar den efter att telefonen faller fritt, alltså då gravitationen är i princip 0. Ifall detta sker returnerar den true;
-    //Det går dock självklart inte att veta om användaren faktiskt hoppar eller bara kastar mobilen i luften och sedan fångar den.
-    //Dess progressbar fungerar heller inte optimalt eftersom det går så snabbt, den hinner för det mesta inte uppdateras innan nästa kort visas.
 
     /**
      * Handles the Jump card. Listens for physical jumps. Also updates the progress bar.
@@ -159,7 +153,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
         return light < 3;
     }
 
-    //Hanterar "Shake"-kortet, kollar ifall användern skakar sin mobil och adderar till progressbaren beroende på hur mycket mobilen skakas.
     /**
      * Handles the Shake card. Increments the progress bar based on amount of shake.
      * @param event accelerometer event
@@ -218,7 +211,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
         }
     }
 
-    //Ifall ett kort avklaras anropas detta och ett nytt skapas, när spelet är slut avslutas aktiviteten.
     /**
      * Handles whether or not the minigame is completed or not. If it is not completed a new card is shown.
      */
@@ -280,7 +272,6 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
-    //Hanterar andringar av korten, samt växlandet emellan dem med hjälp av actionViewSetup
     /**
      * Handles the cards, their timers and progress bars. Updates the view according to a random integer.
      */

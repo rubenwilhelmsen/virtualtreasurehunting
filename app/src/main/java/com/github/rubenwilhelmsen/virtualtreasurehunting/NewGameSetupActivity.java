@@ -1,4 +1,4 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import rubenwilhelmsen.github.com.virtualgeocaching.R;
 
 public class NewGameSetupActivity extends AppCompatActivity {
 

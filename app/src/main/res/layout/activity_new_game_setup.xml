@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewGameSetupActivity">
+    tools:context="com.github.rubenwilhelmsen.virtualtreasurehunting.NewGameSetupActivity">
 
     <include
         android:id="@+id/backbutton_actionbar"

@@ -1,4 +1,4 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import com.google.android.gms.maps.model.LatLng;
 

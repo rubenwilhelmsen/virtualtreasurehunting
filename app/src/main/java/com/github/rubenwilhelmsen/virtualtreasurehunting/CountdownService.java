@@ -1,4 +1,4 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,7 +10,6 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
-//Hanterar timern vid timetrial gamemode:et
 public class CountdownService extends Service {
 
     private CountDownTimer timer;

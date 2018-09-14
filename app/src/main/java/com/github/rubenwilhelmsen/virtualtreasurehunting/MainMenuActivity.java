@@ -1,4 +1,4 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -46,6 +46,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import rubenwilhelmsen.github.com.virtualgeocaching.R;
 
 public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -130,9 +132,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         super.onSaveInstanceState(outState);
     }
 
-    //requestCode1 tar hand om värdena skickade från "NewGameSetupActivity" för att skapa ett nytt spel.
-    //requestCode2 anropas ifall användaren klickat på en skatt och klarat minigame:et.
-    //resultCode = 1 innebär att användaren inte klickade på back-knappen
     /**
      * Handles results from NewGameSetupActivity (starts game based on {@code data}) and OpenTreasureMinigameActivity (registers treasure has been opened in currentGame).
      * @param requestCode which activity the results came from: 1 = NewGameSetupActivity & 2 = OpenTreasureMinigameActivity
@@ -232,7 +231,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         return false;
     }
 
-    //Anropet som laddar google-kartan. Ifall användaren precis har öppnat en kista (finishedMinigame = true) så rensas kartan innan kistorna placeras eftersom en av kistorna har då markerats som "opened" och bör därmed inte synas.
     /**
      * Sets map type to satellite and adds listener to potential markers. Also places markers on map if there is a game in progress. Checks if a minigame has been completed in order to if so remove the marker.
      * @param googleMap map shown to user
@@ -256,7 +254,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         zoomToLastLocation(15);
     }
 
-    //Placerar alla kistor på kartan som inte markerats som "opened".
     /**
      * Places the {@code currentGame}'s {@code Treasure}'s on map.
      */
@@ -268,8 +265,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
         saveGame();
     }
-
-    //Sparar det nuvarande spelet till det interna minnet i en txt fil.
 
     /**
      * Saves the game to the internal storage.
@@ -300,7 +295,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Läser av det interna minnet för att kolla ifall användaren är i ett spel.
     /**
      * Loads the game from the internal storage.
      * @return the {@code Game} loaded; {@code null} if internal storage did not contain any saved game
@@ -367,8 +361,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Tar hand om de olika sätt ett spel kan avslutas på. Kombinationer av userCancelled och vilken typ av gamemode.
-    //Tar även bort spelfilen från det interna minnet.
     /**
      * Handles all the different ways a game can be finished.
      * @param userCancelled true if the game was cancelled by the user (the timer running out also counts as userCancelled)
@@ -405,8 +397,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         handleNewGameButton();
     }
 
-    //Lyssnar klass för kistorna. Ifall användaren klickar på en kista och är inom 25 meters avstånd från den startas minigame:et.
-    //Kollar även ifall användaren klickar på flagg-knappen för att generera en ny kista (userRemoveTreasure) . Isåfall tas den klickade kistan borts och ersätts med en ny.
     /**
      * Listens to taps on google map markers. Minigame starts if user is close to marker, otherwise map just pans to the marker.
      * If user has requested it the marker tapped instead gets replaced.
@@ -434,8 +424,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Lyssnare till knappen Follow.
-    //requestingFollow används av locationCallback för att bestämma ifall kartan ska följa efter användaren.
     /**
      * Listens to taps on the Follow button. Sets the boolean requestingFollow and call method to change appearance of button accordingly.
      */
@@ -448,7 +436,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    //Byter vy till NewGameSetupActivity eller skapar popup för att konfirmera avslutandet av spel beroende på ifall ett spel är igång eller inte
     /**
      * Listens to taps on the New Game button. Starts NewGameSetupActivity if there is no current game. If there is a current game it gets canceled if user confirms a dialog.
      */
@@ -517,7 +504,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Hanterar Follow-knappen toggle beteende
     /**
      * Changes color and text of Follow button according to boolean requestingFollow.
      */
@@ -531,7 +517,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Hanterar "New Game"-knappens toggle beteende
     /**
      * Changes color and text of New Game button based on currentGame object.
      */
@@ -545,7 +530,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //När användaren har godkänt platstjänster så blir knapparna Follow och New Game samt googles platstjänster aktiverade (enableLocation()).
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_PERMISSION) {
@@ -558,7 +542,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Startar google kartans tjänst för att visa användarens plats samt tar bort standard-knappen för att följa efter användaren, blir ersatt med Follow-knappen.
     /**
      * Enables location services if allowed, otherwise asks for permission.
      */
@@ -572,7 +555,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Startar platstjänster
     /**
      * Starts location services if permission is allowed.
      */
@@ -582,7 +564,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    //Skapar en popup som förklarar att appen behöver tillåtelse till platstjänster och hanterar svaret.
     /**
      * Requests permission to access users location through a dialog.
      */

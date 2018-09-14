@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/VirtualGeocaching">
-        <activity android:name=".MainMenuActivity">
+        <activity android:name="com.github.rubenwilhelmsen.virtualtreasurehunting.MainMenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,10 +30,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".NewGameSetupActivity" />
-        <activity android:name=".OpenTreasureMinigameActivity" />
-        <activity android:name=".InfoActivity"></activity>
-        <service android:name=".CountdownService"></service>
+        <activity android:name="com.github.rubenwilhelmsen.virtualtreasurehunting.NewGameSetupActivity" />
+        <activity android:name="com.github.rubenwilhelmsen.virtualtreasurehunting.OpenTreasureMinigameActivity" />
+        <activity android:name="com.github.rubenwilhelmsen.virtualtreasurehunting.InfoActivity"></activity>
+        <service android:name="com.github.rubenwilhelmsen.virtualtreasurehunting.CountdownService"></service>
     </application>
 
 </manifest>

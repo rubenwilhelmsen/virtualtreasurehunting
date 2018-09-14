@@ -1,8 +1,7 @@
-package rubenwilhelmsen.github.com.virtualgeocaching;
+package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 import com.google.android.gms.maps.model.LatLng;
 
-//Håller en lista över alla skatter samt vilket gamemode och användarens val av maxDistance när spelet skapades (används vid generering av ny skatt).
 public class Game {
 
     private Treasure[] treasures;
