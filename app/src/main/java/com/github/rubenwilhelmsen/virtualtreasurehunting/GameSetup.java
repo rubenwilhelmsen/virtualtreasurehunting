@@ -45,8 +45,11 @@ public class GameSetup {
      */
     private boolean calculateTreasures() {
         for (int i = 0; i < numberOfTreasures; i++) {
-            Treasure temp;
-            temp = new Treasure(calculatePosition(getRandomDirection(), getRandomDistance()));
+            Treasure temp = null;
+            LatLng pos = calculatePosition(getRandomDirection(), getRandomDistance());
+            if (pos != null) {
+                temp = new Treasure(pos);
+            }
             if (temp != null) {
                 treasures[i] = temp;
             } else {

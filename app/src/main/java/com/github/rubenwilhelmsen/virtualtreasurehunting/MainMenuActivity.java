@@ -73,6 +73,8 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         timerText.setVisibility(View.GONE);
         currentGame = loadGame();
 
+        requestLocationPermission();
+
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -90,7 +92,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                 lastLocation = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
             }
         };
-        startLocationUpdates();
         zoomToLastLocation(17);
 
         finishedMinigame = false;
@@ -249,6 +250,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         enableLocation();
+        startLocationUpdates();
         zoomToLastLocation(15);
     }
 
@@ -535,7 +537,12 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                 tracklocation.setEnabled(true);
                 newGame.setEnabled(true);
                 enableLocation();
+                startLocationUpdates();
                 zoomToLastLocation(15);
+            } else if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    requestLocationPermission();
+                }
             }
         }
     }
@@ -548,8 +555,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             map.setMyLocationEnabled(true);
             map.getUiSettings().setMyLocationButtonEnabled(false);
-        } else {
-            requestLocationPermission();
         }
     }
 
@@ -566,7 +571,8 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
      * Requests permission to access users location through a dialog.
      */
     private void requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (ContextCompat.checkSelfPermission(MainMenuActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             new AlertDialog.Builder(this)
                     .setTitle("Permission Needed")
                     .setMessage("This application needs access to your device location in order to function. Please tap 'Ok' to continue.")
@@ -582,8 +588,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                             dialog.dismiss();
                         }
                     }).create().show();
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
         }
     }
 
