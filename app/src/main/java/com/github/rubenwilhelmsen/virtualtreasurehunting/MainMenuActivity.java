@@ -165,7 +165,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                     finishedMinigame = true;
                     currentGame.openTreasure((LatLng) data.getParcelableExtra("MARKER_KEY_BACK"));
                     if (currentGame.gameFinished()) {
-                        finishGame(false, false);
+                        finishGame(false, false, false);
                     }
                 }
             }
@@ -181,7 +181,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         public void onReceive(Context context, Intent intent) {
             handleTimer(intent);
             if (intent.getLongExtra("TIMELEFT_KEY", -1) < 1000) {
-                finishGame(true,true);
+                finishGame(true,true, false);
             }
         }
     };
@@ -208,8 +208,6 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
             if (currentGame.getGamemode().equals("timetrial")) {
                 if (serviceRunning(CountdownService.class)) {
                     registerReceiver(broadcastReceiver, new IntentFilter("COUNTDOWN_INTENT"));
-                } else {
-                    finishGame(true,true);
                 }
             }
         }
@@ -323,6 +321,13 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                     gamemodeLine = bf.readLine();
                     String[] s = gamemodeLine.split(",");
                     gamemode = s[0];
+
+                    if (gamemode.equals("timetrial")) {
+                        if (!serviceRunning(CountdownService.class)) {
+                            finishGame(false, false, true);
+                            return null;
+                        }
+                    }
                     maxDistance = Integer.parseInt(s[1]);
 
                     Treasure[] temp = new Treasure[numberOfTreasures];
@@ -366,8 +371,13 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
      * @param userCancelled true if the game was cancelled by the user (the timer running out also counts as userCancelled)
      * @param timeRanOut true if timer ran out
      */
-    private void finishGame(boolean userCancelled, boolean timeRanOut) {
+    private void finishGame(boolean userCancelled, boolean timeRanOut, boolean serviceStopped) {
         deleteCurrentGameFile();
+        if (serviceStopped) {
+            Toast.makeText(this, "Timer service stopped outside of application, game lost.", Toast.LENGTH_LONG).show();
+            timerText.setVisibility(View.GONE);
+            return;
+        }
         if (currentGame.getGamemode().equals("standard")) {
             if (userCancelled) {
                 map.clear();
@@ -452,7 +462,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                finishGame(true, false);
+                                finishGame(true, false, false);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
