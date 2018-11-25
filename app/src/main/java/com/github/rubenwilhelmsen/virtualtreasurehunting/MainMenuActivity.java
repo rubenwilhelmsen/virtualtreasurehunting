@@ -610,7 +610,11 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 public void onSuccess(Location location) {
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+                    if (map != null) {
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+                    } else {
+                        Toast.makeText(MainMenuActivity.this, "Map not available.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
