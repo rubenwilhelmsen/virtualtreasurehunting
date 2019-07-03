@@ -37,5 +37,6 @@
     <string name="info_assist_paragraph_1">Since the treasures are placed randomly they will sometimes be out of reach. If this happens press the flag button in the top right and then the out of reach treasure on the map. This will remove the treasure and generate a new one.</string>
     <string name="info_data_usage_title">Usage of personal data</string>
     <string name="info_data_usage_paragraph">This application uses location services. The data collected are only used for internal app processes and never shared with anyone. The location services are also only used when the app is running. Permissions to this can be turned off from your phones settings application. Your phones accelerometer and light sensor are also used for internal processes during the minigame (detection of shake, jump and brightness). </string>
+    <string name="feedback">Send feedback (email)</string>
 
 </resources>
