@@ -56,17 +56,18 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
 
     private Button tracklocation, newGame;
     private TextView timerText = null;
+    private BroadcastReceiver broadcastReceiver;
 
     private Game currentGame;
     private int LOCATION_PERMISSION = 1;
-    private boolean requestingFollow = false;
     private boolean finishedMinigame;
-    private boolean userRemoveTreasure = false;
+    private boolean requestingFollow,userRemoveTreasure, waitingForTap = false;
+    GameSetup gameSetup = null;
     private LatLng lastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("onCreate", "called, MainMenuActivity");
+        //Log.i("onCreate", "called, MainMenuActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_menu);
         timerText = findViewById(R.id.timer);
@@ -119,7 +120,14 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         if (savedInstanceState != null) {
             requestingFollow = savedInstanceState.getInt("LOCATION_UPDATES_KEY") != 0;
             lastLocation = savedInstanceState.getParcelable("LAST_LOCATION_KEY");
+            waitingForTap = savedInstanceState.getBoolean("WAITING_FOR_TAP_KEY");
+            if (waitingForTap) {
+                gameSetup = savedInstanceState.getParcelable("GAMESETUP_KEY");
+            }
         }
+
+        setupBroadcastReceiver();
+
         handleFollowButton();
         handleNewGameButton();
     }
@@ -128,6 +136,10 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("LOCATION_UPDATES_KEY", requestingFollow ? 1 : 0);
         outState.putParcelable("LAST_LOCATION_KEY", lastLocation);
+        outState.putBoolean("WAITING_FOR_TAP_KEY", waitingForTap);
+        if (gameSetup != null) {
+            outState.putParcelable("GAMESETUP_KEY", gameSetup);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -143,20 +155,11 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
             if (resultCode == 1) {
                 int numberOfTreasures = data.getIntExtra("NUMBER_OF_TREASURES_KEY", -1);
                 int maxDistance = data.getIntExtra("MAX_DISTANCE_KEY", -1);
-                String gamemode = data.getStringExtra("GAMEMODE_KEY");
-                GameSetup gs = new GameSetup(numberOfTreasures, maxDistance, lastLocation);
-                if (gs.getTreasures()!= null) {
-                    currentGame = new Game(gs.getTreasures(), maxDistance, gamemode);
-                    if (gamemode.equals("timetrial")) {
-                        startService(new Intent(this, CountdownService.class).putExtra("TIME_KEY", data.getIntExtra("TIMELIMIT_KEY", -1) * 60 * 1000));
-                        timerText.setVisibility(View.VISIBLE);
-                    } else {
-                        timerText.setVisibility(View.GONE);
-                    }
-                    handleNewGameButton();
-                } else {
-                    Toast.makeText(this, "Game setup failed, position unavailable. Please try again.", Toast.LENGTH_LONG).show();
-                }
+                String gameMode = data.getStringExtra("GAMEMODE_KEY");
+                Toast.makeText(this, "Tap the map to place treasures around that point and start game.", Toast.LENGTH_LONG).show();
+                gameSetup = new GameSetup(numberOfTreasures, maxDistance, data.getIntExtra("TIMELIMIT_KEY", -1), gameMode);
+                waitingForTap = true;
+                handleNewGameButton();
             }
         }
         if (requestCode == 2) {
@@ -176,15 +179,17 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
     /**
      * Creates the Broadcast Reciever and assigns how it should handle the recieved data (which is updating the timer for each call and finishing the game if it runs out).
      */
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            handleTimer(intent);
-            if (intent.getLongExtra("TIMELEFT_KEY", -1) < 1000) {
-                finishGame(true,true, false);
+    private void setupBroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                handleTimer(intent);
+                if (intent.getLongExtra("TIMELEFT_KEY", -1) < 1000) {
+                    finishGame(true,true, false);
+                }
             }
-        }
-    };
+        };
+    }
 
     /**
      * Saves the game and unregisters the Broadcast Reciever listener if it is running.
@@ -193,9 +198,22 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
     public void onDestroy() {
         saveGame();
         if (serviceRunning(CountdownService.class)) {
-            unregisterReceiver(broadcastReceiver);
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+                broadcastReceiver = null;
+            }
         }
         super.onDestroy();
+    }
+
+    private void registerBroadcastReceiver() {
+        if (currentGame!=null) {
+            if (currentGame.getGamemode().equals("timetrial")) {
+                if (serviceRunning(CountdownService.class)) {
+                    registerReceiver(broadcastReceiver, new IntentFilter("COUNTDOWN_INTENT"));
+                }
+            }
+        }
     }
 
     /**
@@ -204,13 +222,30 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onResume() {
         super.onResume();
-        if (currentGame!=null) {
-            if (currentGame.getGamemode().equals("timetrial")) {
-                if (serviceRunning(CountdownService.class)) {
-                    registerReceiver(broadcastReceiver, new IntentFilter("COUNTDOWN_INTENT"));
-                }
+        setupBroadcastReceiver();
+        registerBroadcastReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (serviceRunning(CountdownService.class)) {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+                broadcastReceiver = null;
             }
         }
+    }
+
+    @Override
+    public void onStop() {
+        if (serviceRunning(CountdownService.class)) {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+                broadcastReceiver = null;
+            }
+        }
+        super.onStop();
     }
 
     /**
@@ -237,6 +272,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
         map = googleMap;
         map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         map.setOnMarkerClickListener(new MarkerListener());
+        map.setOnMapClickListener(new MapListener());
 
         if (finishedMinigame) {
             map.clear();
@@ -373,38 +409,94 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private void finishGame(boolean userCancelled, boolean timeRanOut, boolean serviceStopped) {
         deleteCurrentGameFile();
-        if (serviceStopped) {
-            Toast.makeText(this, "Timer service stopped outside of application, game lost.", Toast.LENGTH_LONG).show();
-            timerText.setVisibility(View.GONE);
-            return;
-        }
-        if (currentGame.getGamemode().equals("standard")) {
-            if (userCancelled) {
-                map.clear();
-                Toast.makeText(this, "Game canceled.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Game completed!", Toast.LENGTH_SHORT).show();
+
+        if (!waitingForTap) {
+            if (serviceStopped) {
+                Toast.makeText(this, "Timer service stopped outside of application, game lost.", Toast.LENGTH_LONG).show();
+                timerText.setVisibility(View.GONE);
+                return;
             }
-        } else {
-            if (userCancelled) {
-                if (timeRanOut) {
-                    if (map != null) {
-                        map.clear();
-                    }
-                    Toast.makeText(this, "Time ran out!", Toast.LENGTH_SHORT).show();
-                } else {
+            if (currentGame.getGamemode().equals("standard")) {
+                if (userCancelled) {
                     map.clear();
                     Toast.makeText(this, "Game canceled.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Game completed!", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "Game completed!", Toast.LENGTH_SHORT).show();
+                if (userCancelled) {
+                    if (timeRanOut) {
+                        if (map != null) {
+                            map.clear();
+                        }
+                        Toast.makeText(this, "Time ran out!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        map.clear();
+                        Toast.makeText(this, "Game canceled.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "Game completed!", Toast.LENGTH_SHORT).show();
+                }
+                if (broadcastReceiver != null) {
+                    try {
+                        unregisterReceiver(broadcastReceiver);
+                        broadcastReceiver = null;
+                    } catch (IllegalArgumentException e) {
+                        broadcastReceiver = null;
+                        //Log.i("finishGame", "Receiver not registered.");
+                    }
+                }
+
+                stopService(new Intent(this, CountdownService.class));
+                timerText.setVisibility(View.GONE);
             }
-            unregisterReceiver(broadcastReceiver);
-            stopService(new Intent(this, CountdownService.class));
-            timerText.setVisibility(View.GONE);
+        } else {
+            Toast.makeText(this, "Game canceled.", Toast.LENGTH_SHORT).show();
+            waitingForTap = false;
         }
+
         currentGame = null;
         handleNewGameButton();
+    }
+
+    private void startCountdownService() {
+        startService(new Intent(this, CountdownService.class).putExtra("TIME_KEY", gameSetup.getTimeLimit() * 60 * 1000));
+        timerText.setVisibility(View.VISIBLE);
+    }
+
+    private void startGame(LatLng latLng) {
+        if (gameSetup != null) {
+            if (gameSetup.getTreasures() != null) {
+                gameSetup.calculateTreasures(latLng);
+                currentGame = new Game(gameSetup.getTreasures(), gameSetup.getMaxDistance(), gameSetup.getGameMode());
+                if (gameSetup.getGameMode().equals("timetrial")) {
+                    startCountdownService();
+                    registerBroadcastReceiver();
+                } else {
+                    timerText.setVisibility(View.GONE);
+                }
+                placeTreasures();
+            } else {
+                Toast.makeText(MainMenuActivity.this, "Game setup failed, position unavailable. Please try again.", Toast.LENGTH_LONG).show();
+            }
+            waitingForTap = false;
+        } else {
+            Toast.makeText(this, "Game could not be started.", Toast.LENGTH_SHORT).show();
+        }
+        gameSetup = null;
+    }
+
+    /**
+     * Listens to taps on the google map.
+     * Used for placing the markers after starting the game.
+     */
+    class MapListener implements GoogleMap.OnMapClickListener {
+        @Override
+        public void onMapClick(LatLng latLng) {
+            if (waitingForTap) {
+                startGame(latLng);
+            }
+        }
     }
 
     /**
@@ -452,7 +544,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
     class NewGameListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (currentGame == null) {
+            if (currentGame == null && !waitingForTap) {
                 Intent intent = new Intent(MainMenuActivity.this, NewGameSetupActivity.class);
                 startActivityForResult(intent, 1);
             } else {
@@ -531,7 +623,7 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
      * Changes color and text of New Game button based on currentGame object.
      */
     private void handleNewGameButton() {
-        if (currentGame != null) {
+        if (currentGame != null || waitingForTap) {
             newGame.setTextColor(Color.parseColor("#C23530"));
             newGame.setText("Cancel Game");
         } else {
@@ -610,10 +702,14 @@ public class MainMenuActivity extends AppCompatActivity implements OnMapReadyCal
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 public void onSuccess(Location location) {
-                    if (map != null) {
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+                    if (location != null) {
+                        if (map != null) {
+                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+                        } else {
+                            Toast.makeText(MainMenuActivity.this, "Map not available.", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(MainMenuActivity.this, "Map not available.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainMenuActivity.this, "Please turn on location services.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

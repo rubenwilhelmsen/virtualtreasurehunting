@@ -44,16 +44,8 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (sensor == null) {
-            Toast.makeText(this,"No light sensor found", Toast.LENGTH_SHORT);
-            finishMinigame();
-        }
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (sensor == null) {
-            Toast.makeText(this,"No accelerometer found", Toast.LENGTH_SHORT);
-            finishMinigame();
-        }
+        handleSensorNotFound(sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT));
+        handleSensorNotFound(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
 
         FrameLayout frameLayout = findViewById(R.id.layout);
         frameLayout.setOnClickListener(new TapListener());
@@ -90,13 +82,26 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
     @Override
     public void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this);
+        }
     }
 
     @Override
     public void onBackPressed() {
         setResult(0);
         super.onBackPressed();
+    }
+
+    /**
+     * Exits the minigame if a needed sensor is not found, use with getDefaultSensor(SensorType) as parameter
+     * @param sensor the sensor to check
+     */
+    private void handleSensorNotFound(Sensor sensor) {
+        if (sensor == null) {
+            Toast.makeText(this,"Sensor not found. Skipping minigame", Toast.LENGTH_SHORT).show();
+            finishMinigame();
+        }
     }
 
     /**
@@ -228,7 +233,9 @@ public class OpenTreasureMinigameActivity extends AppCompatActivity implements S
         Intent intent = new Intent();
         intent.putExtra("MARKER_KEY_BACK", getIntent().getParcelableExtra("MARKER_KEY"));
         setResult(1, intent);
-        sensorManager.unregisterListener(this);
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this);
+        }
         finish();
     }
 

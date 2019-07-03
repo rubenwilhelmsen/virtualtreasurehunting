@@ -1,32 +1,32 @@
 package com.github.rubenwilhelmsen.virtualtreasurehunting;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Random;
 
-public class GameSetup {
+public class GameSetup implements Parcelable {
 
-    private int numberOfTreasures;
-    private int maxDistance;
+    private int numberOfTreasures, maxDistance, timeLimit;
     private Treasure[] treasures;
     private Treasure newTreasure;
     private LatLng userPosition;
+    private String gameMode;
 
     /**
      * Constructor used when setting up a new game.
      * @param numberOfTreasures number of treasure
      * @param maxDistance treasure will not be further away than this
-     * @param userPosition the users position
      */
-    public GameSetup(int numberOfTreasures, int maxDistance, LatLng userPosition) {
+    public GameSetup(int numberOfTreasures, int maxDistance, int timeLimit, String gameMode) {
         this.numberOfTreasures = numberOfTreasures;
         this.maxDistance = maxDistance;
-        this.userPosition = userPosition;
+        this.timeLimit = timeLimit;
+        this.gameMode = gameMode;
         treasures = new Treasure[numberOfTreasures];
-        if (!calculateTreasures()) {
-            treasures = null;
-        }
     }
 
     /**
@@ -40,10 +40,31 @@ public class GameSetup {
         newTreasure = new Treasure(calculatePosition(getRandomDirection(), getRandomDistance()));
     }
 
+    protected GameSetup(Parcel in) {
+        numberOfTreasures = in.readInt();
+        maxDistance = in.readInt();
+        timeLimit = in.readInt();
+        userPosition = in.readParcelable(LatLng.class.getClassLoader());
+        gameMode = in.readString();
+    }
+
+    public static final Creator<GameSetup> CREATOR = new Creator<GameSetup>() {
+        @Override
+        public GameSetup createFromParcel(Parcel in) {
+            return new GameSetup(in);
+        }
+
+        @Override
+        public GameSetup[] newArray(int size) {
+            return new GameSetup[size];
+        }
+    };
+
     /**
      * Generates a number of treasures (according to {@code numberOfTreasures}) and inserts them into the {@code treasures} array.
      */
-    private boolean calculateTreasures() {
+    public boolean calculateTreasures(LatLng position) {
+        userPosition = position;
         for (int i = 0; i < numberOfTreasures; i++) {
             Treasure temp = null;
             LatLng pos = calculatePosition(getRandomDirection(), getRandomDistance());
@@ -128,5 +149,31 @@ public class GameSetup {
 
     public Treasure getNewTreasure() {
         return newTreasure;
+    }
+
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(numberOfTreasures);
+        parcel.writeInt(maxDistance);
+        parcel.writeInt(timeLimit);
+        parcel.writeParcelable(userPosition, i);
+        parcel.writeString(gameMode);
     }
 }
